@@ -3,6 +3,7 @@ import Web3 from "web3";
 import ReactMapGL, { Marker } from "react-map-gl";
 import Loader from "react-loader-spinner";
 
+import getAlert from './utils/getAlert';
 import "./App.css";
 import bell from "./assets/images/bell.png";
 import marker from "./assets/images/marker.png";
@@ -173,6 +174,7 @@ class App extends Component {
   };
 
   onSubmit = event => {
+    const toast = getAlert();
     event.preventDefault();
     console.log("submitting form");
     this.setState({ loading: true });
@@ -184,7 +186,6 @@ class App extends Component {
         this.setState({ loading: false });
         return;
       }
-
       try {
         let encryptedHash = await passworder.encrypt(
           process.env.REACT_APP_ENCRYPTION_KEY,
@@ -203,15 +204,23 @@ class App extends Component {
           this.setState({
             decrypedRecords: [
               ...this.state.decrypedRecords,
-              [this.state.caseName, encryptedHash]
+              [this.state.caseName, recordHash]
             ],
             caseName: "",
             place: ""
           });
         }
+        toast.fire({
+          icon: 'success',
+          title: 'Record has been successfully added.',
+        });
       } catch (err) {
         console.log(err);
         this.setState({ loading: false });
+        toast.fire({
+          icon: 'error',
+          title: 'There was some issue, please try again.',
+        });
       }
     });
   };
@@ -225,11 +234,16 @@ class App extends Component {
   };
 
   closeModal = () => {
+    const toast = getAlert();
     const modal = document.getElementById("modal");
     modal.style.display = "none";
     modal.style.opacity = 0;
     this.setState({ danger: false });
     this.setState({ showMarker: true });
+    toast.fire({
+      icon: 'success',
+      title: 'Police force has been successfully deployed.',
+    });
     setTimeout(() => {
       this.setState({ danger: true });
     }, 15000);
@@ -244,11 +258,16 @@ class App extends Component {
   };
 
   closeModal2 = () => {
+    const toast = getAlert();
     const modal = document.getElementById("modal2");
     modal.style.display = "none";
     modal.style.opacity = 0;
     this.setState({ danger: false });
     this.setState({ lashkar: true });
+    toast.fire({
+      icon: 'success',
+      title: 'Police force has been successfully deployed.',
+    });
   };
 
   render() {
