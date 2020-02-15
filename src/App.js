@@ -41,19 +41,20 @@ class App extends Component {
   }
 
   async componentWillMount() {
-    // fetch("http://127.0.0.1:8000/Traffic/default/call/json/final", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     "Access-Control-Allow-Origin": "*"
-    //   }
-    // })
-    //   .then(response => response.json())
-    //   .then(response => {
-    //     if (response < 5) this.setState({ danger: true });
-    //     this.setState({ danger: true });
-    //   })
-    //   .catch(err => console.log(err));
+    fetch("http://127.0.0.1:8000/Traffic/default/call/json/final", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
+      }
+    })
+      .then(response => response.json())
+      .then(response => {
+        console.log(response);
+        if (response < 5) this.setState({ danger: true });
+        // this.setState({ danger: true });
+      })
+      .catch(err => console.log(err));
     await this.loadWeb3();
     await this.loadBlockchainData();
   }
