@@ -56,6 +56,7 @@ class App extends Component {
         if (response < 5) this.setState({ danger: true });
       })
       .catch(err => console.log(err));
+    console.log(process.env.REACT_APP_ENCRYPTION_KEY);
     await this.loadWeb3();
     await this.loadBlockchainData();
   }
@@ -68,67 +69,67 @@ class App extends Component {
 
     const abi = [
       {
-        inputs: [],
-        stateMutability: "nonpayable",
-        type: "constructor"
+        "inputs": [],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
       },
       {
-        anonymous: false,
-        inputs: [
+        "anonymous": false,
+        "inputs": [
           {
-            indexed: false,
-            internalType: "string",
-            name: "recordHash",
-            type: "string"
+            "indexed": false,
+            "internalType": "string",
+            "name": "recordHash",
+            "type": "string"
           }
         ],
-        name: "RecordAdded",
-        type: "event"
+        "name": "RecordAdded",
+        "type": "event"
       },
       {
-        inputs: [
+        "inputs": [
           {
-            internalType: "string",
-            name: "_caseName",
-            type: "string"
+            "internalType": "string",
+            "name": "_caseName",
+            "type": "string"
           },
           {
-            internalType: "string",
-            name: "_recordHash",
-            type: "string"
+            "internalType": "string",
+            "name": "_recordHash",
+            "type": "string"
           },
           {
-            internalType: "string",
-            name: "_area",
-            type: "string"
+            "internalType": "string",
+            "name": "_area",
+            "type": "string"
           }
         ],
-        name: "set",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function"
+        "name": "set",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
       },
       {
-        inputs: [
+        "inputs": [
           {
-            internalType: "string",
-            name: "_area",
-            type: "string"
+            "internalType": "string",
+            "name": "_area",
+            "type": "string"
           }
         ],
-        name: "get",
-        outputs: [
+        "name": "get",
+        "outputs": [
           {
-            internalType: "string[2][]",
-            name: "",
-            type: "string[2][]"
+            "internalType": "string[2][]",
+            "name": "",
+            "type": "string[2][]"
           }
         ],
-        stateMutability: "view",
-        type: "function"
+        "stateMutability": "view",
+        "type": "function"
       }
     ];
-    const address = "0x06cD123eCC87be1C1e210e108BE9FBBBF96b1881";
+    const address = "0x0799e7a828c6734b89E3768D1eB66dD7Ec8Ba201";
     const contract = new web3.eth.Contract(abi, address);
     this.setState({ contract });
     console.log(this.state.contract);
@@ -138,7 +139,7 @@ class App extends Component {
     const decrypedRecords = [];
     for (var i = 0; i < records.length; ++i) {
       const decryptedHash = await passworder.decrypt(
-        "2818d9d529bb466a601e416c12d249973865b3afd019dc9ba4b15451f2b50708",
+        process.env.REACT_APP_ENCRYPTION_KEY,
         records[i][1]
       );
       decrypedRecords.push([records[i][0], decryptedHash]);
@@ -187,7 +188,7 @@ class App extends Component {
 
       try {
         let encryptedHash = await passworder.encrypt(
-          "2818d9d529bb466a601e416c12d249973865b3afd019dc9ba4b15451f2b50708",
+          process.env.REACT_APP_ENCRYPTION_KEY,
           recordHash
         );
         const receipt = await this.state.contract.methods
@@ -199,15 +200,16 @@ class App extends Component {
           .send({ from: this.state.account });
         console.log("receipt", receipt);
         this.setState({ loading: false });
-        if (this.state.place === "Morena")
+        if (this.state.place === "Morena"){
           this.setState({
-            records: [
-              ...this.state.records,
+            decrypedRecords: [
+              ...this.state.decrypedRecords,
               [this.state.caseName, encryptedHash]
             ],
             caseName: "",
             place: ""
           });
+        }
       } catch (err) {
         console.log(err);
         this.setState({ loading: false });
@@ -267,7 +269,7 @@ class App extends Component {
                 </div>
               </div>
             );
-          })
+          }).reverse()
       : null;
 
     return (
@@ -358,29 +360,17 @@ class App extends Component {
               <p>Patrol Regions</p>
               <div className="map-container">
                 <div>
-                <ReactMapGL
-                  {...this.state.viewport}
-                  mapboxApiAccessToken="pk.eyJ1IjoiZ3VuYXNoZWthcjAyIiwiYSI6ImNrNW13b3RjajBzcnMzb3BjdnBsamxlN3QifQ.5oMM26gc-p2TAv93L2yuyA"
-                  onViewportChange={viewport => {
-                    this.setState({ viewport });
-                  }}
-                  mapStyle="mapbox://styles/gunashekar02/ck5mx3kc255nd1io9yea10mdo"
-                >
-                  <Marker latitude={26.3195} longitude={78.3089}>
-                    <div>
-                      <p>MORAR</p>
-                      <img
-                        src={marker}
-                        alt={"Marker"}
-                        height="50px"
-                        width="50px"
-                      ></img>
-                    </div>
-                  </Marker>
-                  {this.state.lashkar ? (
-                    <Marker latitude={26.2883} longitude={78.1928}>
+                  <ReactMapGL
+                    {...this.state.viewport}
+                    mapboxApiAccessToken="pk.eyJ1IjoiZ3VuYXNoZWthcjAyIiwiYSI6ImNrNW13b3RjajBzcnMzb3BjdnBsamxlN3QifQ.5oMM26gc-p2TAv93L2yuyA"
+                    onViewportChange={viewport => {
+                      this.setState({ viewport });
+                    }}
+                    mapStyle="mapbox://styles/gunashekar02/ck5mx3kc255nd1io9yea10mdo"
+                  >
+                    <Marker latitude={26.3195} longitude={78.3089}>
                       <div>
-                        <p>LASHKAR</p>
+                        <p>MORAR</p>
                         <img
                           src={marker}
                           alt={"Marker"}
@@ -389,21 +379,33 @@ class App extends Component {
                         ></img>
                       </div>
                     </Marker>
-                  ) : null}
-                  {this.state.showMarker ? (
-                    <Marker latitude={26.2183} longitude={78.1828}>
-                      <div>
-                        <p>MORENA</p>
-                        <img
-                          src={marker}
-                          alt={"Marker"}
-                          height="50px"
-                          width="50px"
-                        ></img>
-                      </div>
-                    </Marker>
-                  ) : null}
-                </ReactMapGL>
+                    {this.state.lashkar ? (
+                      <Marker latitude={26.2883} longitude={78.1928}>
+                        <div>
+                          <p>LASHKAR</p>
+                          <img
+                            src={marker}
+                            alt={"Marker"}
+                            height="50px"
+                            width="50px"
+                          ></img>
+                        </div>
+                      </Marker>
+                    ) : null}
+                    {this.state.showMarker ? (
+                      <Marker latitude={26.2183} longitude={78.1828}>
+                        <div>
+                          <p>MORENA</p>
+                          <img
+                            src={marker}
+                            alt={"Marker"}
+                            height="50px"
+                            width="50px"
+                          ></img>
+                        </div>
+                      </Marker>
+                    ) : null}
+                  </ReactMapGL>
                 </div>
               </div>
             </div>
