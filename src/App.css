@@ -193,7 +193,7 @@ form button {
   cursor: pointer;
 }
 
-#modal {
+#modal, #modal2 {
   position: absolute;
   /* height: 500px; */
   width: 800px;
@@ -221,11 +221,11 @@ form button {
   }
 }
 
-#modal h1 {
+#modal h1,#modal2 h1 {
   color: red;
 }
 
-#modal button {
+#modal button, #modal2 button {
   height: 80px;
   width: 200px;
   background-color: #4e73df;

@@ -30,13 +30,14 @@ class App extends Component {
       searchQuery: "",
       danger: false,
       showMarker: false,
+      lashkar: false,
       loading: false,
       viewport: {
         latitude: 26.2183,
         longitude: 78.1828,
         width: "43vw",
         height: "40vh",
-        zoom: 14
+        zoom: 10
       }
     };
   }
@@ -228,11 +229,29 @@ class App extends Component {
     modal.style.opacity = 0;
     this.setState({ danger: false });
     this.setState({ showMarker: true });
+    setTimeout(() => {
+      this.setState({ danger: true });
+    }, 15000);
+  };
+
+  openModal2 = () => {
+    if (this.state.danger) {
+      const modal = document.getElementById("modal2");
+      modal.style.display = "flex";
+      modal.style.opacity = 1;
+    }
+  };
+
+  closeModal2 = () => {
+    const modal = document.getElementById("modal2");
+    modal.style.display = "none";
+    modal.style.opacity = 0;
+    this.setState({ danger: false });
+    this.setState({ lashkar: true });
   };
 
   render() {
     const regex = new RegExp(this.state.searchQuery, "i");
-    console.log("de", this.state.decrypedRecords);
     const recordCards = this.state.decrypedRecords
       ? this.state.decrypedRecords
           .filter(record => regex.test(record[0]))
@@ -255,7 +274,9 @@ class App extends Component {
       <div>
         <nav>
           <div>SENTINEL</div>
-          <div onClick={this.openModal}>
+          <div
+            onClick={this.state.showMarker ? this.openModal2 : this.openModal}
+          >
             <img src={bell} height="40px" width="40px" alt="bell" id="bell" />
             {this.state.danger ? (
               <div className="notification-circle">
@@ -337,28 +358,52 @@ class App extends Component {
               <p>Patrol Regions</p>
               <div className="map-container">
                 <div>
-                  <ReactMapGL
-                    {...this.state.viewport}
-                    mapboxApiAccessToken="pk.eyJ1IjoiZ3VuYXNoZWthcjAyIiwiYSI6ImNrNW13b3RjajBzcnMzb3BjdnBsamxlN3QifQ.5oMM26gc-p2TAv93L2yuyA"
-                    onViewportChange={viewport => {
-                      this.setState({ viewport });
-                    }}
-                    mapStyle="mapbox://styles/gunashekar02/ck5mx3kc255nd1io9yea10mdo"
-                  >
-                    {this.state.showMarker ? (
-                      <Marker latitude={26.2183} longitude={78.1828}>
-                        <div>
-                          <p>MORENA</p>
-                          <img
-                            src={marker}
-                            alt={"Marker"}
-                            height="50px"
-                            width="50px"
-                          ></img>
-                        </div>
-                      </Marker>
-                    ) : null}
-                  </ReactMapGL>
+                <ReactMapGL
+                  {...this.state.viewport}
+                  mapboxApiAccessToken="pk.eyJ1IjoiZ3VuYXNoZWthcjAyIiwiYSI6ImNrNW13b3RjajBzcnMzb3BjdnBsamxlN3QifQ.5oMM26gc-p2TAv93L2yuyA"
+                  onViewportChange={viewport => {
+                    this.setState({ viewport });
+                  }}
+                  mapStyle="mapbox://styles/gunashekar02/ck5mx3kc255nd1io9yea10mdo"
+                >
+                  <Marker latitude={26.3195} longitude={78.3089}>
+                    <div>
+                      <p>MORAR</p>
+                      <img
+                        src={marker}
+                        alt={"Marker"}
+                        height="50px"
+                        width="50px"
+                      ></img>
+                    </div>
+                  </Marker>
+                  {this.state.lashkar ? (
+                    <Marker latitude={26.2883} longitude={78.1928}>
+                      <div>
+                        <p>LASHKAR</p>
+                        <img
+                          src={marker}
+                          alt={"Marker"}
+                          height="50px"
+                          width="50px"
+                        ></img>
+                      </div>
+                    </Marker>
+                  ) : null}
+                  {this.state.showMarker ? (
+                    <Marker latitude={26.2183} longitude={78.1828}>
+                      <div>
+                        <p>MORENA</p>
+                        <img
+                          src={marker}
+                          alt={"Marker"}
+                          height="50px"
+                          width="50px"
+                        ></img>
+                      </div>
+                    </Marker>
+                  ) : null}
+                </ReactMapGL>
                 </div>
               </div>
             </div>
@@ -367,6 +412,13 @@ class App extends Component {
             <h1>ALERT!</h1>
             <h2>Very less activity was detected at Sector 45, Morena.</h2>
             <button type="button" onClick={this.closeModal}>
+              Secure Location
+            </button>
+          </div>
+          <div id="modal2">
+            <h1>ALERT!</h1>
+            <h2>Emergency was detected at 4/77, Lashkar.</h2>
+            <button type="button" onClick={this.closeModal2}>
               Secure Location
             </button>
           </div>
