@@ -367,7 +367,7 @@ class App extends Component {
             <h1>ALERT!</h1>
             <h2>Very less activity was detected at Sector 45, Morena.</h2>
             <button type="button" onClick={this.closeModal}>
-              SURAKSHIT
+              Secure Location
             </button>
           </div>
         </div>
