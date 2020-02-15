@@ -8,6 +8,7 @@ import bell from "./assets/images/bell.png";
 import marker from "./assets/images/marker.png";
 import searchIcon from "./assets/images/search.png";
 
+var passworder = require("browser-passworder");
 const ipfsClient = require("ipfs-http-client");
 const ipfs = ipfsClient({
   host: "ipfs.infura.io",
@@ -63,6 +64,7 @@ class App extends Component {
     const accounts = await web3.eth.getAccounts();
     this.setState({ account: accounts[0] });
     console.log(accounts);
+
     const abi = [
       {
         inputs: [],
@@ -125,14 +127,24 @@ class App extends Component {
         type: "function"
       }
     ];
-    const address = "0x826526335a07C937023C714b2bEB82C930EC5E26";
+    const address = "0x06cD123eCC87be1C1e210e108BE9FBBBF96b1881";
     const contract = new web3.eth.Contract(abi, address);
     this.setState({ contract });
     console.log(this.state.contract);
     const records = await contract.methods.get("morena").call();
     console.log("records", records);
+
+    const decrypedRecords = [];
+    for (var i = 0; i < records.length; ++i) {
+      const decryptedHash = await passworder.decrypt(
+        "2818d9d529bb466a601e416c12d249973865b3afd019dc9ba4b15451f2b50708",
+        records[i][1]
+      );
+      decrypedRecords.push([records[i][0], decryptedHash]);
+    }
+
     this.setState({
-      records
+      decrypedRecords
     });
   }
 
@@ -171,15 +183,27 @@ class App extends Component {
         this.setState({ loading: false });
         return;
       }
+
       try {
+        let encryptedHash = await passworder.encrypt(
+          "2818d9d529bb466a601e416c12d249973865b3afd019dc9ba4b15451f2b50708",
+          recordHash
+        );
         const receipt = await this.state.contract.methods
-          .set(this.state.caseName, recordHash, this.state.place.toLowerCase())
+          .set(
+            this.state.caseName,
+            encryptedHash,
+            this.state.place.toLowerCase()
+          )
           .send({ from: this.state.account });
         console.log("receipt", receipt);
         this.setState({ loading: false });
         if (this.state.place === "Morena")
           this.setState({
-            records: [...this.state.records, [this.state.caseName, recordHash]],
+            records: [
+              ...this.state.records,
+              [this.state.caseName, encryptedHash]
+            ],
             caseName: "",
             place: ""
           });
@@ -208,21 +232,24 @@ class App extends Component {
 
   render() {
     const regex = new RegExp(this.state.searchQuery, "i");
-    const recordCards = this.state.records
-      .filter(record => regex.test(record[0]))
-      .map((record, index) => {
-        console.log(regex.test(record[0]));
-        return (
-          <div className="report-card" key={index}>
-            <div>Case Name : {record[0]}</div>
-            <div>
-              <a href={`https://ipfs.infura.io/ipfs/${record[1]}`}>
-                Click here to see the record
-              </a>
-            </div>
-          </div>
-        );
-      });
+    console.log("de", this.state.decrypedRecords);
+    const recordCards = this.state.decrypedRecords
+      ? this.state.decrypedRecords
+          .filter(record => regex.test(record[0]))
+          .map((record, index) => {
+            console.log(regex.test(record[0]));
+            return (
+              <div className="report-card" key={index}>
+                <div>Case Name : {record[0]}</div>
+                <div>
+                  <a href={`https://ipfs.infura.io/ipfs/${record[1]}`}>
+                    Click here to see the record
+                  </a>
+                </div>
+              </div>
+            );
+          })
+      : null;
 
     return (
       <div>
@@ -243,7 +270,7 @@ class App extends Component {
             <div>
               Upload Report
               <form onSubmit={this.onSubmit}>
-                <label >
+                <label>
                   Case Name
                   <input
                     type="text"
@@ -251,7 +278,7 @@ class App extends Component {
                     onChange={name =>
                       this.setState({ caseName: name.target.value })
                     }
-                    style={{marginLeft: "60px"}}
+                    style={{ marginLeft: "60px" }}
                     value={this.state.caseName}
                   />
                 </label>
@@ -308,32 +335,32 @@ class App extends Component {
             </div>
             <div className="map-parent-container">
               <p>Patrol Regions</p>
-            <div className="map-container">
-              <div>
-                <ReactMapGL
-                  {...this.state.viewport}
-                  mapboxApiAccessToken="pk.eyJ1IjoiZ3VuYXNoZWthcjAyIiwiYSI6ImNrNW13b3RjajBzcnMzb3BjdnBsamxlN3QifQ.5oMM26gc-p2TAv93L2yuyA"
-                  onViewportChange={viewport => {
-                    this.setState({ viewport });
-                  }}
-                  mapStyle="mapbox://styles/gunashekar02/ck5mx3kc255nd1io9yea10mdo"
-                >
-                  {this.state.showMarker ? (
-                    <Marker latitude={26.2183} longitude={78.1828}>
-                      <div>
-                        <p>MORENA</p>
-                        <img
-                          src={marker}
-                          alt={"Marker"}
-                          height="50px"
-                          width="50px"
-                        ></img>
-                      </div>
-                    </Marker>
-                  ) : null}
-                </ReactMapGL>
+              <div className="map-container">
+                <div>
+                  <ReactMapGL
+                    {...this.state.viewport}
+                    mapboxApiAccessToken="pk.eyJ1IjoiZ3VuYXNoZWthcjAyIiwiYSI6ImNrNW13b3RjajBzcnMzb3BjdnBsamxlN3QifQ.5oMM26gc-p2TAv93L2yuyA"
+                    onViewportChange={viewport => {
+                      this.setState({ viewport });
+                    }}
+                    mapStyle="mapbox://styles/gunashekar02/ck5mx3kc255nd1io9yea10mdo"
+                  >
+                    {this.state.showMarker ? (
+                      <Marker latitude={26.2183} longitude={78.1828}>
+                        <div>
+                          <p>MORENA</p>
+                          <img
+                            src={marker}
+                            alt={"Marker"}
+                            height="50px"
+                            width="50px"
+                          ></img>
+                        </div>
+                      </Marker>
+                    ) : null}
+                  </ReactMapGL>
+                </div>
               </div>
-            </div>
             </div>
           </div>
           <div id="modal">
