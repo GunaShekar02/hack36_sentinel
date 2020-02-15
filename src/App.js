@@ -56,7 +56,6 @@ class App extends Component {
         if (response < 5) this.setState({ danger: true });
       })
       .catch(err => console.log(err));
-    console.log(process.env.REACT_APP_ENCRYPTION_KEY);
     await this.loadWeb3();
     await this.loadBlockchainData();
   }
