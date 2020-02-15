@@ -129,7 +129,7 @@ class App extends Component {
         "type": "function"
       }
     ];
-    const address = "0x0799e7a828c6734b89E3768D1eB66dD7Ec8Ba201";
+    const address = "0x1521f45f4791444E55862d2003Ef10DFF0881dFb";
     const contract = new web3.eth.Contract(abi, address);
     this.setState({ contract });
     console.log(this.state.contract);
