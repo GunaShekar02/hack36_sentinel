@@ -1,8 +1,14 @@
 # SENTINEL
 
 ## Problem
-2 of the major problems in the crime sector is providing security and assurance to the victims who are forced to take down crime records when a powerful or influential person is involved on the other side, and if they don't agree to it, they even go to an extent of destroying those records.
-The second is measures to prevent crime. Though there are a lot of CCTV cameras deployed across the country, they are majorly used to identify evidences after a crime has occurred, rather than using them to prevent the crime in the first place. Also, the lack of sufficient police forces leads to all regions not being secure.
-We'd like to implement an application which uses technology to address all these issues.
 
-Blockchain Smart Contracts can be used to decentralize and secure crime records, such that victims may not be pressurized to take the cases down, as it frequently happens in sensitive cases such as rape. Statistics show that crime usually happens in regions with very less activity, therefore by developing a model which can detect activity in a regions(for example, count the number of vehicles and people) and also regions with extreme and emergency situations such as fighting, mob rage etc., and send notifications about regions with such activity, police patrolling can be done in those regions. Hence this will not only be beneficial in preventing crimes, but also effectively allocate police forces on their patrolling duty.
+Inspite of the presence of several security cameras in India, they are not used to prevent crime, but are rather used to gather evidences after a crime has occurred. Also, due to a low police to people ratio in India and especially in states like Uttar Pradesh, Bihar and Jharkhand, it is not possible to allocate patrol duties to the police forces in such a way that all regions are covered and crimes are reduced.
+
+The second significant problem faced in this sector is the presence of powerful people and leaders who pressurise victims to take their cases down in order to protect their image, and also go to the extent of completely destroying those records when it comes to sensitive cases like rape, murder etc..
+
+## Solution
+
+We plan to build a Control Panel Application which integrates the solutions to these 2 issues.
+According to statistics, crimes usually happen in regions with very less activity, hence, by developing a Deep Learning Model which can identify the activity density of a region based on the number of people, vehicles etc., and sending notifications about regions with less activity to the police in real time via web sockets, police forces can be deployed in these regions. Hence this will not only be beneficial in preventing crimes, but also effectively allocate police forces on their patrolling duty.
+
+Coming to the second issue, we can leverage the immutable nature of Blockchain and the ability of Smart Contracts to decentralize and secure crime records, such that they cannot be taken down. As it is expected that there will be many records being undertaken every second all over the country, deploying the contract on the Matic network will highly improve the scalability and throughput of the application.
