@@ -52,7 +52,6 @@ class App extends Component {
       .then(response => {
         console.log(response);
         if (response < 5) this.setState({ danger: true });
-        // this.setState({ danger: true });
       })
       .catch(err => console.log(err));
     await this.loadWeb3();
@@ -310,7 +309,6 @@ class App extends Component {
             <div className="map-parent-container">
               <p>Patrol Regions</p>
             <div className="map-container">
-              {/* <p>Patrol Regions</p> */}
               <div>
                 <ReactMapGL
                   {...this.state.viewport}
